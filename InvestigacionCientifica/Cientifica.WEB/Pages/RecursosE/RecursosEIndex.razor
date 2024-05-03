@@ -1,0 +1,69 @@
+﻿
+
+@page "/RecursosE"
+@using Cientifica.Shared.Entities
+@using Cientifica.WEB.Repositories
+@using Cientifica.WEB.Shared
+
+@inject IRepository Repository
+<h3>RecursosEIndex</h3>
+
+
+<div class="n-3">
+    <a class="btn btn-primary" href="/RecursosE/create"></a>
+</div>
+
+<div class="card-body">
+
+    <GenericList MyList="RecursosE">
+
+        <Body>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var RecursosE in RecursosE!)
+                    {
+                        <tr>
+                            <td>
+                                <a href="/RecursosE/edit/@RecursosE.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
+                                <button class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar</button>
+                            </td>
+
+                            <td>
+                                @RecursosE.nombre
+                            </td>
+                            <td>
+                                @RecursosE.cantidad
+                            </td>
+                            <td>
+                                @RecursosE.proveedor
+                            </td>
+
+                            <td>
+                                @RecursosE.entrega
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
+</div>
+
+@code {
+
+    public List<RecursosE>? RecursosE { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<RecursosE>>("/api/RecursosE");
+
+        RecursosE = responseHttp.Response!;
+    }
+
+}
+

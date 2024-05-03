@@ -1,0 +1,54 @@
+﻿@page "/Publicaciones"
+@using Cientifica.Shared.Entities
+@using Cientifica.WEB.Repositories
+@using Cientifica.WEB.Shared
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+<h3>PublicacionesIndex</h3>
+@* 
+<div class="m-3">
+    <a class="btn btn-primary" href="/autores/create">Nueva Publicacion</a>
+</div>
+
+<GenericList MyList="publicaciones">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var publicacion in publicaciones!)
+                {
+                    <tr>
+                        <td>
+                            @publicacion.autores
+                        </td>
+
+                        <td>
+                            @publicacion.fechapu
+                        </td>
+
+                        <td>
+                            <a href="/autores/edit/@publicacion.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar </a>
+                            <button class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList> *@
+
+@code {
+/*
+    public List<Publicacion> publicaciones { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<publicaciones>>("/api/publicaciones");
+        publicaciones = responseHttp.Response!;
+    }
+*/
+}

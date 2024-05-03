@@ -1,1 +1,4 @@
-# Cientifica2
+# InvestigacionCientifica
+ROBIN ALEXANDER MONTOYA VELASQUEZ
+
+JUAN DIEGO PUERTA SALAZAR
