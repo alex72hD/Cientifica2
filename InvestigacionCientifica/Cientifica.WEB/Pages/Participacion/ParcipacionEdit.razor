@@ -1,0 +1,75 @@
+﻿@page "/Participaciones/edit/{Id:int}"
+@using System.Net
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar</h3>
+
+@if (participacion is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <ParticipacionForm @ref="participacionForm"  Participacion="participacion" OnValidSubmit="Editar" ReturnAction="Return"/>
+
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Participacion participacion;
+    private ParticipacionForm participacionForm;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var responseHttp = await repository.GetAsync<Participacion>($"api/Participacion/{Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/Participacion");
+            }
+            else
+            {
+                var messsage = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", messsage, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            participacion = responseHttp.Response;
+
+        }
+    }
+
+
+    private async Task Editar()
+    {
+        var responseHttp = await repository.PutAsync("/api/Participaciones", participacion);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message);
+            return;
+        }
+
+    Return();
+    var toast = sweetAlertService.Mixin(new SweetAlertOptions
+    {
+        Toast = true,
+        Position = SweetAlertPosition.BottomEnd,
+        ShowConfirmButton = true,
+        Timer = 3000
+    });
+    await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+}
+
+        private void Return()
+        {
+        participacionForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/RecursosEs");
+        }
+   
+}
