@@ -5,37 +5,42 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-
     <div class="mb-3">
-        <label>Titulo de la publicacion:</label>
+        <label>Nombre de la activida de investigacion:</label>
         <div>
-            <InputDate width="10" @bind-Value="Publicacion.titulo"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.titulo)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Nombre del autor:</label>
-        <div>
-            <InputDate width="10" @bind-Value="Publicacion.autores"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.autores)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>fecha de publicacion:</label>
-        <div>
-            <InputDate width="10" @bind-Value="Publicacion.fechapu"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.fechapu)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Numero de proyecto asociado:</label>
-        <div>
-            <InputDate width="10" @bind-Value="Publicacion.ProyectoDeinvestigacion"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.ProyectoDeinvestigacion)" />
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.Nombre "></InputDate>
+            <ValidationMessage For="@(() =>ActividadesDeInvestigacion.Nombre  )" />
         </div>
     </div>
 
-   
+    <div class="mb-3">
+        <label>Descripcion de la actividad:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.Descripcion"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.Descripcion )" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Cuando inicio:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.FechaDeInicio"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.FechaDeInicio )" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Cuando finalizo:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.FechaDeFinalizacion"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.FechaDeFinalizacion )" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Numeor de asignacion relacionada:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.AsignacionId"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.AsignacionId )" />
+        </div>
+    </div>
 
 
 
@@ -49,14 +54,14 @@
     private EditContext editContext = null!;
     protected override void OnInitialized()
     {
-        editContext = new(Publicacion);
+        editContext = new(ActividadesDeInvestigacion);
     }
 
 
 
     [Parameter]
     [EditorRequired]
-    public Publicacion Publicacion { get; set; } = null!;
+    public ActividadesDeInvestigacion ActividadesDeInvestigacion { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
@@ -103,5 +108,3 @@
         context.PreventNavigation();
     }
 }
-
-

@@ -5,37 +5,21 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-
     <div class="mb-3">
-        <label>Titulo de la publicacion:</label>
+        <label>Numero de proyecto asignado:</label>
         <div>
-            <InputDate width="10" @bind-Value="Publicacion.titulo"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.titulo)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Nombre del autor:</label>
-        <div>
-            <InputDate width="10" @bind-Value="Publicacion.autores"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.autores)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>fecha de publicacion:</label>
-        <div>
-            <InputDate width="10" @bind-Value="Publicacion.fechapu"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.fechapu)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Numero de proyecto asociado:</label>
-        <div>
-            <InputDate width="10" @bind-Value="Publicacion.ProyectoDeinvestigacion"></InputDate>
-            <ValidationMessage For="@(() => Publicacion.ProyectoDeinvestigacion)" />
+            <InputDate width="10" @bind-Value="Asignacion.ProyectoDeInvestigacionId"></InputDate>
+            <ValidationMessage For="@(() => Asignacion.ProyectoDeInvestigacionId)" />
         </div>
     </div>
 
-   
+    <div class="mb-3">
+        <label>Rerencia numerica de recurso utilizado:</label>
+        <div>
+            <InputDate width="10" @bind-Value="Asignacion.RecursosEId"></InputDate>
+            <ValidationMessage For="@(() => Asignacion.RecursosEId)" />
+        </div>
+    </div>
 
 
 
@@ -49,14 +33,14 @@
     private EditContext editContext = null!;
     protected override void OnInitialized()
     {
-        editContext = new(Publicacion);
+        editContext = new(Asignacion);
     }
 
 
 
     [Parameter]
     [EditorRequired]
-    public Publicacion Publicacion { get; set; } = null!;
+    public Asignacion Asignacion { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
@@ -103,5 +87,4 @@
         context.PreventNavigation();
     }
 }
-
 

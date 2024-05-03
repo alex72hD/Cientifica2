@@ -1,0 +1,109 @@
+﻿@page "/Participacion"
+@using Cientifica.Shared.Entities
+@using Cientifica.WEB.Repositories
+@using Cientifica.WEB.Shared
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+
+
+<div class="n-3">
+    <a class="btn btn-primary" href="/Participaciones/create"></a>
+</div>
+
+<div class="card-body">
+
+    <GenericList MyList="Participaciones">
+
+        <Body>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Participaciones!)
+                    {
+                        <tr>
+                            <td>
+                                <a href="/Participaciones/edit/@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
+                                <button @onclick=@(() => DeleteAsycn(item)) class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar</button>
+                            </td>
+
+                            <td>
+                                @item.ProyectoDeInvestigaciones
+                            </td>
+                         
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
+</div>
+@code {
+    public List<Participacion> Participaciones { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var responseHttp = await repository.GetAsync<List<Participacion>>("api/Participaciones");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        Participaciones = responseHttp.Response;
+    }
+
+
+
+    private async Task DeleteAsycn(Participacion participacion)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Estas seguro de querer borrar el la participacion: {participacion.InvestigadorId}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+            });
+        var confirm = string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.DeletAsync<Participacion>($"/api/participaciones{participacion.Id}");
+         if (responseHttp.Error)
+         {
+           if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+             {
+                 navigationManager.NavigateTo("Participaciones");
+            }
+           else
+          {
+                var mensajeError = await responseHttp.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+             }
+          return;
+         }
+
+        await LoadAsync();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro borrado con éxito.");
+    }
+
+}
