@@ -2,7 +2,9 @@
 @using Cientifica.Shared.Entities
 @using Cientifica.WEB.Repositories
 @using Cientifica.WEB.Shared
-@inject IRepository Repository
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
 <h3>RecursosEIndex</h3>
 
 
@@ -53,13 +55,66 @@
 
 @code {
 
-    public List<RecursosE>? RecursosE { get; set; }
+    public List<RecursosE> RecursosE { get; set; }
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        var responseHttp = await Repository.GetAsync<List<RecursosE>>("/api/RecursosE");
+        await LoadAsync();
+    }
 
-        RecursosE = responseHttp.Response!;
+    private async Task LoadAsync()
+    {
+        var responseHttp = await repository.GetAsync<List<RecursosE>>("api/RecursosEs");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        RecursosE = responseHttp.Response;
+    }
+
+
+
+    private async Task DeleteAsycn(RecursosE recursosE)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Estas seguro de querer borrar el recurso: {recursosE.nombre}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+            });
+        var confirm = string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.DeleteAsync<RecursosE>($"api/Publicaciones/{recursosE.Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("RecursosEs");
+            }
+            else
+            {
+                var mensajeError = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+            return;
+        }
+
+        await LoadAsync();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro borrado con éxito.");
     }
 
 }

@@ -17,7 +17,7 @@
     {
 
 
-        var responseHttp = await repository.Post("/api/Publicaciones", publicacion);
+        var responseHttp = await repository.PostAsync("/api/Publicaciones", publicacion);
         if (responseHttp.Error)
         {
 

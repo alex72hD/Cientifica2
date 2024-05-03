@@ -32,7 +32,10 @@
                             </td>
 
                             <td>
-                                @item.ProyectoDeInvestigaciones
+                                @item.InvestigadorId
+                            </td>
+                            <td>
+                                @item.ProyectoDeInvestigacionId
                             </td>
                          
                         </tr>
@@ -80,16 +83,16 @@
             return;
         }
 
-        var responseHttp = await repository.DeletAsync<Participacion>($"/api/participaciones{participacion.Id}");
-         if (responseHttp.Error)
-         {
-           if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
-             {
-                 navigationManager.NavigateTo("Participaciones");
+        var responseHttp = await repository.DeleteAsync<Participacion>($"/api/participaciones{participacion.Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("Participaciones");
             }
-           else
-          {
-                var mensajeError = await responseHttp.GetErrorMessageAsync();
+            else
+            {
+                var mensajeError = await responseHttp.GetErrorMessage();
                 await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
              }
           return;

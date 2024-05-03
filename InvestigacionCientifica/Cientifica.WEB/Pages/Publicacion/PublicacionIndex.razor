@@ -32,27 +32,17 @@
                                 </td>
 
                                 <td>
-                                    @item.
+                                    @item.titulo
                                 </td>
                                 <td>
-                                    @item.
+                                    @item.autores
                                 </td>
                                 <td>
-                                    @item.
-                                </td>
-
-                                <td>
-                                    @item.
-                                </td>
-                                <td>
-                                    @item.
-                                </td>
-                                <td>
-                                    @item.
+                                    @item.fechapu
                                 </td>
 
                                 <td>
-                                    @item.
+                                    @item.ProyectoDeinvestigacion
                                 </td>
                             </tr>
                         }
@@ -99,20 +89,20 @@
             return;
         }
 
-        // var responseHttp = await repository.DeletAsync<Publicacion>($"api/Publicaciones/{publicacion.autores}");
-        // if (responseHttp.Error)
-        // {
-        //     if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
-        //     {
-        //         navigationManager.NavigateTo("publicaciones");
-        //     }
-        //     else
-        //     {
-        //         var mensajeError = await responseHttp.GetErrorMessageAsync();
-        //         await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
-        //     }
-        //     return;
-        // }
+        var responseHttp = await repository.DeleteAsync<Publicacion>($"api/Publicaciones/{publicacion.autores}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("publicaciones");
+            }
+            else
+            {
+                var mensajeError = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+            return;
+         }
 
         await LoadAsync();
         var toast = sweetAlertService.Mixin(new SweetAlertOptions
