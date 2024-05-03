@@ -5,37 +5,12 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label>Nombre del recurso:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.nombre"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.nombre)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>cantidad del recurso:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.cantidad"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.cantidad)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Proveedor:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.proveedor"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.proveedor)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Fecha de entrega:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.entrega"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.entrega)" />
-        </div>
-    </div>
-   
 
- 
+
+
+
+
+
     <button class="btn btn-primary" type="submit"><i class="bi bi-floppy" />Guardar Cambios</button>
     <button class="btn btn-info" type="reset"><i class="bi bi-x-circle" />Limpiar</button>
     <button class="btn btn-success" onclick="ReturnAction"><i class="bi bi-arrow-left" />Regresar</button>
@@ -46,14 +21,14 @@
     private EditContext editContext = null!;
     protected override void OnInitialized()
     {
-        editContext = new(RecursosE);
+        editContext = new(Publicacion);
     }
 
 
 
     [Parameter]
     [EditorRequired]
-    public RecursosE RecursosE { get; set; } = null!;
+    public Publicacion Publicacion { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
@@ -100,3 +75,5 @@
         context.PreventNavigation();
     }
 }
+
+

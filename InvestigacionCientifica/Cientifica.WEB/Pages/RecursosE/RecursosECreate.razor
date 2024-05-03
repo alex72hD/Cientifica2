@@ -1,0 +1,75 @@
+﻿@page "/RecursosE/create"
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+<h3>Crear</h3>
+
+<OwnerForm @ref="RecursosEForm" RecursosE="recursose" OnValidSubmit="Create" ReturnAction="Return"/>
+
+@code {
+    private RecursosE recursosE = new RecursosE();
+    private RecursosEForm recursoseForm;
+
+    public RecursosECreate()
+    {
+    }
+
+    private async Task Create()
+    {
+
+
+        var responseHttp = await repository.Post("/api/RecursosE", recursosE);
+        if (responseHttp.Error)
+        {
+
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message);
+            return;
+
+
+        }
+
+        Return();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+
+
+
+
+            });
+
+
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro creado con éxito");
+    }
+
+
+    private void Return()
+    {
+
+
+
+
+        recursoseForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/owners");
+
+
+
+
+    }
+
+
+}
+
+
+
+<h3>RecursosECreate</h3>
+
+@code {
+
+}
