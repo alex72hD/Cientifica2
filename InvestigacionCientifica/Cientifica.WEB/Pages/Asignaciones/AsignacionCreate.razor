@@ -1,21 +1,23 @@
-﻿@page "/RecursosE/create"
+﻿@page "/Asignacion/create"
 @inject NavigationManager navigationManager
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
 
  <h3>Crear</h3>
 
-<RecursosEForm @ref="recursosEForm" RecursosE="recursosE" OnValidSubmit="Create" ReturnAction="Return"/>
+<AsignacionForm @ref="asignacionForm" Asignacion="asignacion" OnValidSubmit="Create" ReturnAction="Return"/>
 
 @code {
-    private RecursosE recursosE = new RecursosE();
-    private RecursosEForm recursosEForm;
+    private Asignacion asignacion = new Asignacion();
+    private AsignacionForm asignacionForm;
+
+
 
     private async Task Create()
     {
 
 
-        var responseHttp = await repository.Post("/api/RecursosE", recursosE);
+        var responseHttp = await repository.Post("/api/Asignaciones", asignacion);
         if (responseHttp.Error)
         {
 
@@ -51,8 +53,8 @@
 
 
 
-        recursosEForm!.FormularioPosteadoConExito = true;
-        navigationManager.NavigateTo("/RecusosE");
+        asignacionForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/Asignaciones");
 
 
 
@@ -61,4 +63,3 @@
 
 
 }
- 

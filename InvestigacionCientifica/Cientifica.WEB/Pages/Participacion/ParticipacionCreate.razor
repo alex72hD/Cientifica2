@@ -1,21 +1,23 @@
-﻿@page "/RecursosE/create"
+﻿@page "/Participacion/create"
 @inject NavigationManager navigationManager
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
 
  <h3>Crear</h3>
 
-<RecursosEForm @ref="recursosEForm" RecursosE="recursosE" OnValidSubmit="Create" ReturnAction="Return"/>
+<ParticipacionForm @ref="participacionForm" Participacion="participacion" OnValidSubmit="Create" ReturnAction="Return"/>
 
 @code {
-    private RecursosE recursosE = new RecursosE();
-    private RecursosEForm recursosEForm;
+    private Participacion participacion = new Participacion();
+    private ParticipacionForm participacionForm;
+
+
 
     private async Task Create()
     {
 
 
-        var responseHttp = await repository.Post("/api/RecursosE", recursosE);
+        var responseHttp = await repository.Post("/api/Parcipaciones", participacion);
         if (responseHttp.Error)
         {
 
@@ -51,8 +53,8 @@
 
 
 
-        recursosEForm!.FormularioPosteadoConExito = true;
-        navigationManager.NavigateTo("/RecusosE");
+        participacionForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/Participaciones");
 
 
 
@@ -61,4 +63,3 @@
 
 
 }
- 
