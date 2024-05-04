@@ -17,7 +17,7 @@
     {
 
 
-        var responseHttp = await repository.Post("/api/Actividades", actividad);
+        var responseHttp = await repository.PostAsync("/api/Actividades", actividad);
         if (responseHttp.Error)
         {
 
