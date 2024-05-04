@@ -1,0 +1,66 @@
+﻿@page "/ProyectoDeInvestigacion/create"
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+ <h3>Crear</h3>
+
+<ProyectodeInvestigacionForm @ref="ProyectoDeInvestigacionForm" ProyectoDeInvestigacion="ProyectoDeInvestigacion" OnValidSubmit="Create" ReturnAction="Return"/>
+
+@code {
+    private ProyectoDeInvestigacion ProyectoDeInvestigacion = new ProyectoDeInvestigacion();
+    private ProyectodeInvestigacionForm ProyectoDeInvestigacionForm;
+
+
+
+    private async Task Create()
+    {
+
+
+        var responseHttp = await repository.PostAsync("/api/ProyectoDeInvestigaciones", ProyectoDeInvestigacion);
+        if (responseHttp.Error)
+        {
+
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message);
+            return;
+
+
+        }
+
+        Return();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+
+
+
+
+            });
+
+
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro creado con éxito");
+    }
+
+
+    private void Return()
+    {
+
+
+
+
+        ProyectoDeInvestigacionForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/ProyectoDeInvestigaciones");
+
+
+
+
+    }
+
+
+}
+

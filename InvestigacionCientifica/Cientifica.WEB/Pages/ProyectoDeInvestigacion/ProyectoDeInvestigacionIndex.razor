@@ -1,0 +1,116 @@
+﻿@page "/proyectodeinvestigacion"
+@using Cientifica.Shared.Entities
+@using Cientifica.WEB.Repositories
+@using Cientifica.WEB.Shared
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
+<h3>proyectosdeinvestigacioIndex</h3>
+
+<div class="n-3">
+    <a class="btn btn-primary" href="/proyectosdeinvestigacio/create"></a>
+</div>
+
+<div class="card-body">
+
+    <GenericList MyList="proyectosdeinvestigacion">
+
+        <Body>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in proyectosdeinvestigacion!)
+                    {
+                        <tr>
+                            <td>
+                                <a href="/proyectosdeinvestigacio/edit/@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
+                                <button @onclick=@(() => DeleteAsycn(item)) class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar</button>
+                            </td>
+
+                            <td>
+                                @item.Nombre
+                            </td>
+                            <td>
+                                @item.Descripcion
+                            </td>
+                            <td>
+                                @item.FechaDeInicio
+                            </td>
+
+              
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
+</div>
+@code {
+    public List<ProyectoDeInvestigacion> proyectosdeinvestigacion { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var responseHttp = await repository.GetAsync<List<ProyectoDeInvestigacion>>("api/proyectosdeinvestigacio");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        proyectosdeinvestigacion = responseHttp.Response;
+    }
+
+
+
+    private async Task DeleteAsycn(ProyectoDeInvestigacion proyectosdeinvestigacion)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Estas seguro de querer borrar el proyecto: {proyectosdeinvestigacion.Nombre}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+            });
+        var confirm = string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.DeleteAsync<ProyectoDeInvestigacion>($"api/proyectosdeinvestigacio/{proyectosdeinvestigacion.autores}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("proyectosdeinvestigacio");
+            }
+            else
+            {
+                var mensajeError = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+            return;
+        }
+
+        await LoadAsync();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro borrado con éxito.");
+    }
+
+}

@@ -1,0 +1,75 @@
+﻿@page "/ProyectoDeInvestigacion/edit/{Id:int}"
+@using System.Net
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar</h3>
+
+@if (ProyectoDeInvestigacion is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <ProyectodeInvestigacionForm @ref="ProyectoDeInvestigacionForm1"  ProyectoDeInvestigacion="ProyectoDeInvestigacion" OnValidSubmit="Editar" ReturnAction="Return"/>
+
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private ProyectoDeInvestigacion ProyectoDeInvestigacion;
+    private ProyectodeInvestigacionForm ProyectoDeInvestigacionForm1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var responseHttp = await repository.GetAsync<ProyectoDeInvestigacion>($"api/ProyectoDeInvestigacion/{Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/ProyectoDeInvestigacion");
+            }
+            else
+            {
+                var messsage = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", messsage, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            ProyectoDeInvestigacion = responseHttp.Response;
+
+        }
+    }
+
+
+    private async Task Editar()
+    {
+        var responseHttp = await repository.PutAsync("/api/Publicaion", ProyectoDeInvestigacion);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message);
+            return;
+        }
+
+    Return();
+    var toast = sweetAlertService.Mixin(new SweetAlertOptions
+    {
+        Toast = true,
+        Position = SweetAlertPosition.BottomEnd,
+        ShowConfirmButton = true,
+        Timer = 3000
+    });
+    await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+}
+
+        private void Return()
+        {
+        ProyectoDeInvestigacionForm1!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/RecursosEs");
+        }
+   
+}
