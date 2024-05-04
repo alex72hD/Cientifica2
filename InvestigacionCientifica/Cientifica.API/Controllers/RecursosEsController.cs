@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cientifica.API.Controllers
 {
-      [ApiController]
+   [ApiController]
    [Route("/api/recursosEs")]    
    public class RecursosEsController:ControllerBase
    {
@@ -26,7 +26,7 @@ namespace Cientifica.API.Controllers
            await _Context.SaveChangesAsync();
            return Ok(recursosE);
        }
-        [HttpGet("int:id")]
+   [HttpGet("int:id")]
    public async Task<ActionResult> get(int id)
 {
 

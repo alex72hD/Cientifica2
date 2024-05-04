@@ -39,10 +39,10 @@ namespace Cientifica.Shared.Entities
 
 
         [JsonIgnore]
-        public ICollection<Participacion>? Participaciones { get; set; }
+        public ICollection<Participacion> Participaciones { get; set; }
         [JsonIgnore]
-        public ICollection<Publicacion>? Publicaciones { get; set;}
+        public ICollection<Publicacion> Publicaciones { get; set;}
         [JsonIgnore]
-        public ICollection<Asignacion>? Asignaciones { get;}
+        public ICollection<Asignacion> Asignaciones { get;}
     }
 }

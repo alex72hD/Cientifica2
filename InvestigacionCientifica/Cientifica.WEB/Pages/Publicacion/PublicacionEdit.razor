@@ -12,7 +12,7 @@
 }
 else
 {
-    <PublicacionForm @ref="publicacionForm"  Publicacion="publicacion" OnValidSubmit="Editar" ReturnAction="Return"/>
+    <PublicacionForm @ref="publicacionForm1"  Publicacion="publicacion" OnValidSubmit="Editar" ReturnAction="Return"/>
 
 }
 
@@ -20,7 +20,7 @@ else
     [Parameter]
     public int Id { get; set; }
     private Publicacion publicacion;
-    private PublicacionForm publicacionForm;
+    private PublicacionForm publicacionForm1;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -68,7 +68,7 @@ else
 
         private void Return()
         {
-        publicacionForm!.FormularioPosteadoConExito = true;
+        publicacionForm1!.FormularioPosteadoConExito = true;
         navigationManager.NavigateTo("/RecursosEs");
         }
    

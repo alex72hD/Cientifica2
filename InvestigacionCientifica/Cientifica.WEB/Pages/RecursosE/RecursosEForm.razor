@@ -1,63 +1,47 @@
 ﻿
-@inject SweetAlertService swal
+<EditForm Model="recursosE" OnValidSubmit="OnValidSubmit">
 
-<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
-
-
-<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label>Nombre del recurso:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.nombre"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.nombre)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>cantidad del recurso:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.cantidad"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.cantidad)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Proveedor:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.proveedor"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.proveedor)" />
-        </div>
-    </div>
-    <div class="mb-3">
-        <label>Fecha de entrega:</label>
-        <div>
-            <InputDate width="10" @bind-Value="RecursosE.entrega"></InputDate>
-            <ValidationMessage For="@(() => RecursosE.entrega)" />
-        </div>
-    </div>
-   
 
+    <div class="mb-3">
+        <label>Nombre</label>
+        <div>
+            <InputText width="10" @bind-Value="@recursosE.nombre"></InputText>
+            <ValidationMessage For="@(() => @recursosE.nombre)" />
+        </div>
+        <label>Descripcion</label>
+        <div>
+            <InputNumber width="10" @bind-Value="@recursosE.cantidad"></InputNumber>
+            <ValidationMessage For="@(() => @recursosE.cantidad)" />
+        </div>
+        <label>Teimpo de Comienzo</label>
+        <div>
+            <InputDate width="10" @bind-Value="@recursosE.proveedor"></InputDate>
+            <ValidationMessage For="@(() => @recursosE.proveedor)" />
+        </div>
  
-    <button class="btn btn-primary" type="submit"><i class="bi bi-floppy" />Guardar Cambios</button>
-    <button class="btn btn-info" type="reset"><i class="bi bi-x-circle" />Limpiar</button>
-    <button class="btn btn-success" onclick="ReturnAction"><i class="bi bi-arrow-left" />Regresar</button>
+
+    </div>
+
+    <button class="btn btn-primary" type="submit">Guardar <i class="bi bi-floppy2"></i></button>
+    <button class="btn btn-info" type="reset">Limpiar <i class="bi bi-x-octagon"></i></button>
+    <button class="btn btn-secondary" @onclick="ReturnAction">Regresar <i class="bi bi-arrow-clockwise"></i></button>
 </EditForm>
+
+
+
 
 @code {
 
-    private EditContext editContext = null!;
-    protected override void OnInitialized()
-    {
-        editContext = new(RecursosE);
-    }
 
-
-
-    [Parameter]
     [EditorRequired]
-    public RecursosE RecursosE { get; set; } = null!;
-
     [Parameter]
+    public RecursosE recursosE {get;set;}
+    
+
+
     [EditorRequired]
+    [Parameter]
     public EventCallback OnValidSubmit { get; set; }
 
 
@@ -65,39 +49,6 @@
     [Parameter]
     public EventCallback ReturnAction { get; set; }
 
-    public bool FormularioPosteadoConExito { get; set; } = false;
 
-
-
-    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
-    {
-        var formularioFueEditado = editContext.IsModified();
-
-        if (!formularioFueEditado)
-        {
-            return;
-        }
-
-        if (FormularioPosteadoConExito)
-        {
-            return;
-        }
-
-        var resultado = await swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "Confirmación",
-                Text = "¿Deseas abandonar la página y perder los cambios?",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true
-            });
-
-        var confirmado = !string.IsNullOrEmpty(resultado.Value);
-
-        if (confirmado)
-        {
-            return;
-        }
-
-        context.PreventNavigation();
-    }
 }
+

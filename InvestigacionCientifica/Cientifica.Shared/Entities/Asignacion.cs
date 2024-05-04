@@ -21,7 +21,7 @@ namespace Cientifica.Shared.Entities
         [JsonIgnore]
        
 
-        public ICollection<ActividadesDeInvestigacion>? ActividadesDeInvestigaciones { get; set; }
+        public ICollection<ActividadesDeInvestigacion> ActividadesDeInvestigaciones { get; set; }
 
         
 
