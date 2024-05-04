@@ -83,12 +83,12 @@
             return;
         }
 
-        var responseHttp = await repository.DeleteAsync<Participacion>($"/api/asignacion{asignacion.Id}");
+        var responseHttp = await repository.DeleteAsync<Asignacion>($"/api/asignacion{asignacion.Id}");
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                navigationManager.NavigateTo("Participaciones");
+                navigationManager.NavigateTo("Asignaciones");
             }
             else
             {
