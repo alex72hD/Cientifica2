@@ -1,17 +1,19 @@
-﻿@page "/Actividades"
+﻿@page "/Asignacion"
 @using Cientifica.Shared.Entities
 @using Cientifica.WEB.Repositories
 @using Cientifica.WEB.Shared
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
 @inject NavigationManager navigationManager
+
+
 <div class="n-3">
-    <a class="btn btn-primary" href="/Actividade/create"></a>
+    <a class="btn btn-primary" href="/Asignaciones/create"></a>
 </div>
 
 <div class="card-body">
 
-    <GenericList MyList="Actividad">
+    <GenericList MyList="Asignacion">
 
         <Body>
             <table class="table table-striped">
@@ -21,19 +23,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Actividad!)
+                    @foreach (var item in Asignacion!)
                     {
                         <tr>
                             <td>
-                                <a href="/Actividad/edit/@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
+                                <a href="/Asignacion/edit/@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
                                 <button @onclick=@(() => DeleteAsycn(item)) class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar</button>
                             </td>
 
                             <td>
-                                @item.
+                                @item.ProyectoDeInvestigacionId
                             </td>
                             <td>
-                                @item.
+                                @item.ProyectoDeInvestigacionId
                             </td>
 
                         </tr>
@@ -44,7 +46,7 @@
     </GenericList>
 </div>
 @code {
-    public List<ActividadesDeInvestigacion> Actividad { get; set; }
+    public List<Asignacion> Asignacion { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -54,24 +56,24 @@
 
     private async Task LoadAsync()
     {
-        var responseHttp = await repository.GetAsync<List<ActividadesDeInvestigacion>>("api/Actividades");
+        var responseHttp = await repository.GetAsync<List<Asignacion>>("api/Asignaciones");
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessage();
             await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
-        Actividad = responseHttp.Response;
+        Asignacion = responseHttp.Response;
     }
 
 
 
-    private async Task DeleteAsycn(ActividadesDeInvestigacion actividad)
+    private async Task DeleteAsycn(Asignacion asignacion)
     {
         var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
-                Text = $"¿Estas seguro de querer borrar el la asignacion: {actividad}?",
+                Text = $"¿Estas seguro de querer borrar el la asignacion: {asignacion.Id}?",
                 Icon = SweetAlertIcon.Question,
                 ShowCancelButton = true,
             });
@@ -81,12 +83,12 @@
             return;
         }
 
-        var responseHttp = await repository.DeleteAsync<ActividadesDeInvestigacion>($"/api/actividad{actividad.Id}");
+        var responseHttp = await repository.DeleteAsync<Asignacion>($"/api/asignacion{asignacion.Id}");
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                navigationManager.NavigateTo("/Actividades");
+                navigationManager.NavigateTo("Asignaciones");
             }
             else
             {

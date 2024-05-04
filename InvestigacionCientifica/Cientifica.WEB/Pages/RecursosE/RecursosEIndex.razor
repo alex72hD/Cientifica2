@@ -1,69 +1,135 @@
-﻿
-
-@page "/RecursosE"
+﻿@page "/recursosE"
 @using Cientifica.Shared.Entities
 @using Cientifica.WEB.Repositories
 @using Cientifica.WEB.Shared
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
 
-@inject IRepository Repository
-<h3>RecursosEIndex</h3>
 
 
-<div class="n-3">
-    <a class="btn btn-primary" href="/RecursosE/create"></a>
+
+<div class="m-3"> @* Esto es el btn de guardar*@
+    <a class="btn btn-primary" href="/recursosE/create">Recursos Especiales</a>    
 </div>
+<GenericList MyList="RecursosE">
 
-<div class="card-body">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Proyecto</th>
+                    <th></th>
 
-    <GenericList MyList="RecursosE">
-
-        <Body>
-            <table class="table table-striped">
-                <thead>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var recursosE in RecursosE!)
+                {
                     <tr>
-                        <th></th>
+                        <td>
+                            @recursosE.nombre
+                        </td>
+                        <td>
+                            @recursosE.cantidad
+                        </td>
+                        <td>
+                            @recursosE.proveedor
+                        </td>
+                        <td>
+                            @recursosE.entrega
+                        </td>
+                                          
+                        <td>
+                            @*El boton editar redirecciona a otro form*@
+                            <a href="/recursosE/edit/@recursosE.Id" class="btn btn-warning" style="margin-bottom:10px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="15" fill="currentColor" class="bi bi-scissors" viewBox="0 0 16 16">
+                                     <path d="M3.5 3.5c-.614-.884-.074-1.962.858-2.5L8 7.226 11.642 1c.932.538 1.472 1.616.858 2.5L8.81 8.61l1.556 2.661a2.5 2.5 0 1 1-.794.637L8 9.73l-1.572 2.177a2.5 2.5 0 1 1-.794-.637L7.19 8.61zm2.5 10a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0m7 0a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
+                                </svg>
+                                Editar</a>
+                            @*El boton de borrar la accion de borrar*@
+                            <button class="btn btn-danger" @onclick=@(()=>Delete(recursosE))>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="15" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                  <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                </svg>
+                                Borrar </button>
+                        </td>
+
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var RecursosE in RecursosE!)
-                    {
-                        <tr>
-                            <td>
-                                <a href="/RecursosE/edit/@RecursosE.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square" /> Editar</a>
-                                <button class="btn btn-sm btn-danger"><i class="bi bi-trash-fill" /> Borrar</button>
-                            </td>
+                }
+            </tbody>
+        </table>
 
-                            <td>
-                                @RecursosE.nombre
-                            </td>
-                            <td>
-                                @RecursosE.cantidad
-                            </td>
-                            <td>
-                                @RecursosE.proveedor
-                            </td>
+    </Body>
+ 
+</GenericList>
 
-                            <td>
-                                @RecursosE.entrega
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </Body>
-    </GenericList>
-</div>
 
 @code {
 
-    public List<RecursosE>? RecursosE { get; set; }
+    public List<RecursosE> RecursosE { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
-        var responseHttp = await Repository.GetAsync<List<RecursosE>>("/api/RecursosE");
-
-        RecursosE = responseHttp.Response!;
+        await Charging();
     }
 
+
+
+    private async Task Charging()
+    {
+        var responseHTTP = await repository.GetAsync<List<RecursosE>>("/api/recursosE");
+        RecursosE = responseHTTP.Response!;
+
+    }
+
+
+    private async Task Delete(RecursosE recursosE)
+    {
+
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Realmente deseas eliminar la tarea: {recursosE.nombre}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHTTP = await repository.DeleteAsync($"/api/recursosE/{recursosE.Id}");
+
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/recursosE");
+            }
+            else
+            {
+                var mensajeError = await responseHTTP.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            await Charging();
+
+            var toast = sweetAlertService.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    ShowConfirmButton = true,
+                    Timer = 3000,
+                    Position = SweetAlertPosition.BottomEnd
+                });
+            toast.FireAsync(icon: SweetAlertIcon.Success, message: "Recursos borrada con éxito.");
+        }
+    }
 }
 

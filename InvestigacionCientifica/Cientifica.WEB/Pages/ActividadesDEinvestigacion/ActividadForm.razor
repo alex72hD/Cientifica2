@@ -1,0 +1,110 @@
+﻿@inject SweetAlertService swal
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
+
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>Nombre de la activida de investigacion:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.Nombre "></InputDate>
+            <ValidationMessage For="@(() =>ActividadesDeInvestigacion.Nombre  )" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Descripcion de la actividad:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.Descripcion"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.Descripcion )" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Cuando inicio:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.FechaDeInicio"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.FechaDeInicio )" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Cuando finalizo:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.FechaDeFinalizacion"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.FechaDeFinalizacion )" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Numeor de asignacion relacionada:</label>
+        <div>
+            <InputDate width="10" @bind-Value="ActividadesDeInvestigacion.AsignacionId"></InputDate>
+            <ValidationMessage For="@(() => ActividadesDeInvestigacion.AsignacionId )" />
+        </div>
+    </div>
+
+
+
+    <button class="btn btn-primary" type="submit"><i class="bi bi-floppy" />Guardar Cambios</button>
+    <button class="btn btn-info" type="reset"><i class="bi bi-x-circle" />Limpiar</button>
+    <button class="btn btn-success" onclick="ReturnAction"><i class="bi bi-arrow-left" />Regresar</button>
+</EditForm>
+
+@code {
+
+    private EditContext editContext = null!;
+    protected override void OnInitialized()
+    {
+        editContext = new(ActividadesDeInvestigacion);
+    }
+
+
+
+    [Parameter]
+    [EditorRequired]
+    public ActividadesDeInvestigacion ActividadesDeInvestigacion { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback ReturnAction { get; set; }
+
+    public bool FormularioPosteadoConExito { get; set; } = false;
+
+
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formularioFueEditado = editContext.IsModified();
+
+        if (!formularioFueEditado)
+        {
+            return;
+        }
+
+        if (FormularioPosteadoConExito)
+        {
+            return;
+        }
+
+        var resultado = await swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Deseas abandonar la página y perder los cambios?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true
+            });
+
+        var confirmado = !string.IsNullOrEmpty(resultado.Value);
+
+        if (confirmado)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
+}

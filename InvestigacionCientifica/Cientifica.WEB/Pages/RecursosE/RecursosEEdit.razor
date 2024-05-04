@@ -1,0 +1,74 @@
+﻿@page "/RecursosEs/edit/{Id:int}"
+@using System.Net
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar</h3>
+
+@if (recursos is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <RecursosEForm @ref="recursosEForm"  RecursosE="recursos" OnValidSubmit="Editar" ReturnAction="Return"/>
+
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private RecursosE recursos;
+    private RecursosEForm recursosEForm;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var responseHttp = await repository.GetAsync<RecursosE>($"api/RecursosEs/{Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("/RecursosEs");
+            }
+            else
+            {
+                var messsage = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", messsage, SweetAlertIcon.Error);
+            }
+        }
+        else
+        {
+            recursos = responseHttp.Response;
+        }
+    }
+
+
+    private async Task Editar()
+    {
+        var responseHttp = await repository.PutAsync("/api/RecursosEs", recursos);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message);
+            return;
+        }
+
+    Return();
+    var toast = sweetAlertService.Mixin(new SweetAlertOptions
+    {
+        Toast = true,
+        Position = SweetAlertPosition.BottomEnd,
+        ShowConfirmButton = true,
+        Timer = 3000
+    });
+    await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+}
+
+        private void Return()
+        {
+        recursosEForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/RecursosEs");
+        }
+   
+}

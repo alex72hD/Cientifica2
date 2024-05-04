@@ -1,0 +1,65 @@
+﻿@page "/Asignacion/create"
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+ <h3>Crear</h3>
+
+<AsignacionForm @ref="asignacionForm" Asignacion="asignacion" OnValidSubmit="Create" ReturnAction="Return"/>
+
+@code {
+    private Asignacion asignacion = new Asignacion();
+    private AsignacionForm asignacionForm;
+
+
+
+    private async Task Create()
+    {
+
+
+        var responseHttp = await repository.PostAsync("/api/Asignaciones", asignacion);
+        if (responseHttp.Error)
+        {
+
+            var message = await responseHttp.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message);
+            return;
+
+
+        }
+
+        Return();
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+
+
+
+
+            });
+
+
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro creado con éxito");
+    }
+
+
+    private void Return()
+    {
+
+
+
+
+        asignacionForm!.FormularioPosteadoConExito = true;
+        navigationManager.NavigateTo("/Asignaciones");
+
+
+
+
+    }
+
+
+}
